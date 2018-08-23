@@ -1,0 +1,46 @@
+gcloud beta sql connect ruchinpa --user=root
+
+UPDATING BOOKS
+
+Update book SET avgrating = 2.50 WHERE isbn = "9730618260320";
+Update book SET avgrating = 3.47 WHERE isbn = "9770618260320";
+Update book SET avgrating = 3.40 WHERE isbn = "9780618260300";
+Update book SET avgrating = 3.40 WHERE isbn = "9780618260301";
+Update book SET avgrating = 2.50 WHERE isbn = "9780618260320";
+Update book SET avgrating = 4.20 WHERE isbn = "9781560974321";
+Update book SET avgrating = 2.50 WHERE isbn = "9880618260320";
+
+----------------------------------------------------------------------------------
+
+SELECTING latest date added books FROM table
+
+SELECT * FROM shelf JOIN ((SELECT uid As Tuid,Max(dateAdded) AS latestDate from shelf GROUP BY uid) AS T) ON ((shelf.uid = Tuid) AND (shelf.dateAdded = T.latestDate));
+
+--------------------------------------------------------------------------------
+
+UPDATNG PRICE:
+
+UPDATE book INNER JOIN ((SELECT isbn,rating FROM shelf,((SELECT uid AS Tuid,MAX(dateAdded)AS latestDate from shelf GROUP by uid) AS T) WHERE ((shelf.dateAdded = T.latestDate) AND (shelf.uid = Tuid))) AS final) ON (book.isbn = final.isbn) SET book.avgrating = (book.avgrating + final.rating)/2;
+
+-----------------------------------------------------------------------------------
+
+2.) GITHUB
+
+creating tables:
+
+USERS:
+
+create table users (userId int, noOfRepos int, location varchar(50),email varchar(50), website varchar(50), contributions int,primary key(userId));
+
+
+REPOSITORY:
+
+create table repository (repoId int, userId int not null, issueCount int, pullCount int, projectsCount int, wiki boolean primary key (repoId), constraint fk1 foreign key(userId) references users(userId));
+
+ISSUE:
+
+create table issue (issueId int, creatorId int not null,raiseDate date, resolverId int, resolveDate date, primary key (issueId), constraint fk2 foreign key(creatorId) references users(userId), constraint fk3 foreign key(resolverId) references users(userId));
+
+CODES:
+
+create table codes (repoId int, commits int not null, branches int not null, releases int, contributors int, primary key(repoId), constraint fk4 foreign key(repoId) references repository(repoId));

@@ -1,0 +1,38 @@
+  
+  ANSWERS
+  
+  QUESTION 1:
+  
+SET @X=4, @Y=5, @Z=6;
+SELECT *
+FROM users
+WHERE userId IN (SELECT DISTINCT userId
+                 FROM branch 
+                 WHERE ((repoId IN (@X,@Y)) AND (repoId NOT IN (@Z))));
+        
+  
+  QUESTION 2:
+  
+SELECT *,(deletions-additions) AS high_line_code_red
+FROM commits
+WHERE (deletions-additions)=(SELECT MAX(deletions-additions) AS D
+                             FROM commits);
+                             
+                             
+  QUESTION 3(BONUS):
+  
+SELECT *
+FROM users
+WHERE userId IN (SELECT creatorId
+  FROM
+     (SELECT creatorId,issue_created,issue_resolved,(issue_resolved - issue_created) AS winner
+      FROM
+          (SELECT creatorId,COUNT(creatorID) AS issue_created
+          FROM issue
+          GROUP BY creatorID) AS T1
+          JOIN
+          (SELECT resolverId,COUNT(resolverID) AS issue_resolved
+          FROM issue
+          GROUP BY resolverID) AS T2
+          ON (T1.creatorId = T2.resolverID)) AS T3    
+   WHERE (T3.winner > 0));  

@@ -1,0 +1,23 @@
+
+QUESTION 1:
+
+  CREATE TRIGGER update_rating AFTER INSERT ON shelf
+    FOR EACH ROW
+      UPDATE book
+        SET avgrating = (SELECT SUM(rating) FROM shelf WHERE isbn = NEW.isbn)/(SELECT COUNT(isbn) FROM shelf WHERE isbn = NEW.isbn)
+      WHERE (book.isbn = NEW.isbn);
+
+
+QUESTION 2:
+
+SET @X = 1, @Y = 3;
+SELECT title 
+FROM book
+WHERE book.isbn IN (SELECT shelf.isbn
+FROM shelf
+WHERE shelf.uid = @X
+AND shelf.NAME = "READ"
+AND shelf.isbn IN
+   (SELECT shelf.isbn
+    FROM shelf
+    WHERE shelf.uid = @Y));

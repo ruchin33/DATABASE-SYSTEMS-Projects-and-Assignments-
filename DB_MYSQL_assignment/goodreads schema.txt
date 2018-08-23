@@ -1,0 +1,88 @@
+create table author(
+  authorId int, 
+  name varchar(20) not null, 
+  primary key (authorId));
+  
+  INSERT into author VALUES(1,"Joe Sacco");
+  INSERT into author VALUES(2,"Tolkien");
+  INSERT into author VALUES(3,"George Martin");
+  
+create table book (
+  isbn varchar(255), 
+  title varchar(20), 
+  authorId int,
+  numpages int not null, 
+  avgrating decimal(3,2), 
+  primary key(isbn),
+  constraint fk1 foreign key(authorId) references author(authorId));
+  
+  INSERT into book VALUES("9730618260320","ASOS",3,150,2.50);
+  INSERT into book VALUES("9770618260320","ACOK",3,150,3.47);
+  INSERT into book VALUES("9780618260300","The Hobbit",2,366,3.40);
+  INSERT into book VALUES("9780618260301","LOTR 1",2,350,3.40);
+  INSERT into book VALUES("9780618260320","LOTR 2",2,150,2.50);
+  INSERT into book VALUES("9781560974321","Palestine",1,288,4.20);
+  INSERT into book VALUES("9880618260320","AGOT",3,150,2.50);
+  
+create table users(
+  uid int, 
+  name varchar(20), 
+  age int, 
+  sex char(1), 
+  location varchar(20), 
+  birthday date, 
+  readCt int, 
+  toReadCt int,
+  currentlyReadCt int, 
+  primary key(uid));
+
+INSERT into users VALUES(1,"User 1",21,"M","India",'1992-01-14',10,5,1);
+INSERT into users VALUES(2,"User 2",21,"M","USA",'1992-02-14',8,10,2);
+INSERT into users VALUES(3,"User 3",21,"M","London",'1992-03-14',10,20,5);
+INSERT into users VALUES(4,"user4",20,"m","jampit",'2000-01-01',10,3,12);
+
+create table shelf(
+  uid int, 
+  isbn varchar(255), 
+  name varchar(20), 
+  rating decimal(3,2), 
+  dateRead date, 
+  dateAdded date, 
+  primary key(uid, isbn), 
+  constraint fk2 foreign key(uid) references users(uid), 
+  constraint fk3 foreign key(isbn) references book(isbn));
+  
+  INSERT into shelf VALUES(1,"9770618260320","Read",5.00,'2000-01-01','2000-02-02');
+  INSERT into shelf VALUES(1,"9780618260301","Read",5.00,'2000-01-01','2000-01-01');
+  INSERT into shelf VALUES(1,"9780618260320","Read",5.00,'2000-01-01','2000-02-02');
+  INSERT into shelf VALUES(1,"9781560974321","Read",5.00,'2000-01-01','2000-02-02');
+  INSERT into shelf VALUES(2,"9770618260320","To-Read",2.70,NULL,'2000-02-02');
+  INSERT into shelf VALUES(2,"9781560974321","To-Read",2.70,NULL,'2000-02-02');
+  INSERT into shelf VALUES(3,"9770618260320","Read",5.00,'1999-12-11','2000-01-01');
+  INSERT into shelf VALUES(4,"9780618260300","Currently-Reading",5.00,NULL,'2000-02-02');
+  INSERT into shelf VALUES(4,"9780618260301","Currently-Reading",5.00,NULL,'2000-02-02');
+  
+  
+create table friends(
+  uid int, 
+  fid int, 
+  primary key(uid, fid), 
+  constraint fk4 foreign key(uid) references users(uid), 
+  constraint fk5 foreign key(fid) references users(uid));
+  
+  INSERT into friends VALUES(2,1);
+  INSERT into friends VALUES(3,1);
+  INSERT into friends VALUES(1,2);
+  INSERT into friends VALUES(1,3);
+  
+  CREATE TRIGGER update_rating AFTER INSERT ON shelf
+    FOR EACH ROW
+      UPDATE book
+        SET avgrating = (SELECT SUM(rating) FROM shelf WHERE isbn = NEW.isbn)/(SELECT COUNT(isbn) FROM shelf WHERE isbn = NEW.isbn)
+      WHERE (book.isbn = NEW.isbn);
+  
+  INSERT into shelf VALUES(4,"9730618260320","Read",2.5,'2000-01-01','2000-02-02');
+  INSERT into shelf VALUES(3,"9730618260320","Read",3.5,'2000-01-01','2000-02-02');
+  INSERT into shelf VALUES(2,"9730618260320","Read",5.0,'2000-01-01','2000-02-02');
+  
+
