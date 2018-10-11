@@ -60,37 +60,37 @@
 -- 	CONCAT(stock_quantity,' in stock') AS quantity
 -- FROM books;
 
-SELECT title FROM books
-	WHERE title LIKE '%stories%';
-	
-SELECT title,pages FROM books
-	ORDER BY pages DESC
-	LIMIT 1;
-	
-SELECT CONCAT(title,'-',released_year) AS 'summary' FROM books
-	ORDER BY released_year DESC
-	LIMIT 3;
-	
-SELECT title,author_lname FROM books
-	WHERE author_lname LIKE '% %';
-	
-SELECT title,released_year,stock_quantity FROM books
-	ORDER BY stock_quantity,title LIMIT 3;
-	
-SELECT title,author_lname FROM books
-	ORDER BY author_lname,title;
-	
-	
-SELECT  UPPER(
-		CONCAT(
-			'my favourite author is ',
-			author_fname,
-			' ',	
-			author_lname,
-			'!'
-		)
-	) AS 'Yell'
-	FROM books ORDER BY author_lname;
+-- SELECT title FROM books
+-- 	WHERE title LIKE '%stories%';
+-- 	
+-- SELECT title,pages FROM books
+-- 	ORDER BY pages DESC
+-- 	LIMIT 1;
+-- 	
+-- SELECT CONCAT(title,'-',released_year) AS 'summary' FROM books
+-- 	ORDER BY released_year DESC
+-- 	LIMIT 3;
+-- 	
+-- SELECT title,author_lname FROM books
+-- 	WHERE author_lname LIKE '% %';
+-- 	
+-- SELECT title,released_year,stock_quantity FROM books
+-- 	ORDER BY stock_quantity,title LIMIT 3;
+-- 	
+-- SELECT title,author_lname FROM books
+-- 	ORDER BY author_lname,title;
+-- 	
+-- 	
+-- SELECT  UPPER(
+-- 		CONCAT(
+-- 			'my favourite author is ',
+-- 			author_fname,
+-- 			' ',	
+-- 			author_lname,
+-- 			'!'
+-- 		)
+-- 	) AS 'Yell'
+-- 	FROM books ORDER BY author_lname;
 
 
 -- 	SELECT DISTINCT UPPER( 
@@ -105,24 +105,39 @@ SELECT  UPPER(
 
 
 	
-SELECT DISTINCT table1.Yell FROM
-(
-SELECT  UPPER(
-		CONCAT(
-			'my favourite author is ',
-			author_fname,
-			' ',	
-			author_lname,
-			'!'
-		)
-	) AS Yell, author_lname
-	FROM books ORDER BY author_lname
-) AS table1	
-ORDER BY table1.author_lname;
+-- SELECT DISTINCT table1.Yell FROM
+-- (
+-- SELECT  UPPER(
+-- 		CONCAT(
+-- 			'my favourite author is ',
+-- 			author_fname,
+-- 			' ',	
+-- 			author_lname,
+-- 			'!'
+-- 		)
+-- 	) AS Yell, author_lname
+-- 	FROM books ORDER BY author_lname
+-- ) AS table1	
+-- ORDER BY table1.author_lname;
+-- 
+SELECT COUNT(title) FROM books;
 
 
+SELECT released_year,COUNT(DISTINCT title)
+FROM books GROUP BY released_year;
 
+SELECT SUM(stock_quantity) FROM books;
 
+SELECT author_fname,author_lname,AVG(released_year) FROM books
+GROUP BY author_lname,author_fname;
 
+SELECT CONCAT(author_fname,' ',author_lname) AS 'full name',pages
+	FROM books
+	ORDER BY pages DESC 
+	LIMIT 1;
+
+SELECT released_year,COUNT(DISTINCT title),AVG(pages)
+FROM books
+GROUP BY released_year;
 
 	
